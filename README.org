@@ -7,7 +7,7 @@ Have Emacs set environment variables defined in a project's .envrc.
 When working at the terminal, I use [[http://direnv.net/][direnv]] to export environment
 variables that alter the behavior of the [[http://12factor.net/][12 factor]] applications I
 write. direnv automatically exports the variables to the environment
-when you `cd` into a directory containing a *.envrc* file.
+when you *cd* into a directory containing a *.envrc* file.
 
 When launching a GUI instance of Emacs (not from the terminal), direnv
 never gets the chance to export your environment variables, however. 
@@ -15,14 +15,14 @@ never gets the chance to export your environment variables, however.
 This package contains a command *projectile-direnv-export-variables*
 which will look for a .envrc file in the projectile-project-root. 
 
-It will then parse the .envrc file for exports and call `setenv` in
+It will then parse the .envrc file for exports and call *setenv* in
 the Emacs environment. This is useful, for instance, when launching
 processes from within Emacs (e.g. REPLs) that depend on the values in
 these variables.
 
 * Installation
 
-This package is available on MELPA as `projectile-direnv`
+This package is available on MELPA as *projectile-direnv*
 
 * Dependencies
 
@@ -33,7 +33,7 @@ This package is available on MELPA as `projectile-direnv`
 * Usage
 
 The easiest way to use this package is to invoke
-`projectile-direnv-export-variables` from a hook:
+*projectile-direnv-export-variables* from a hook:
 
 #+begin_src lisp
 
