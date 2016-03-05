@@ -6,7 +6,7 @@
 ;; URL: https://github.com/christianromney/projectile-direnv
 ;; Keywords: convenience
 ;; Version: 0.1.0
-;; Package-Requires: ((s "1.11.0") (dash "2.12.1") (projectile "0.13.0"))
+;; Package-Requires: ((emacs "24") (s "1.11.0") (dash "2.12.0") (projectile "0.13.0"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -77,3 +77,4 @@ environment variables for any defined exports"
           (message "projectile-direnv: export %s" (projectile-direnv-list-exports envvars)))))))
 
 (provide 'projectile-direnv)
+;;; projectile-direnv.el ends here
