@@ -42,7 +42,7 @@
   "Parses a single line of the form export VAR=VAL into a cons
 cell where the car is the var name and the cdr is its value."
   (let* ((parts (s-split "=" line))
-         (varname (car (last (s-split " " (first parts)))))
+         (varname (car (last (s-split " " (car parts)))))
          (varval (car (last parts))))
     (cons varname varval)))
 
