@@ -24,6 +24,8 @@ these variables.
 
 This package is available on MELPA as *projectile-direnv*
 
+[[https://melpa.org/#/projectile-direnv][file:https://melpa.org/packages/projectile-direnv-badge.svg]] 
+
 * Dependencies
 
 - [[https://github.com/magnars/s.el][s]]
