@@ -41,6 +41,20 @@ The easiest way to use this package is to invoke
 
 #+end_src
 
+** Cautionary Note
+
+You should only do this if you work on one project with a .envrc file
+at a time. This is because Emacs' environment is a global one, and
+projectile mode is per-buffer. It is easily conceivable to visit a
+file in one project and load envvars whose names clash with those in
+another project. This will cause a last-project-wins scenario that
+could lead to confusion and frustrated debugging. 
+
+There are two ways to address this concern.
+
+1. Explicitly invoke the command (instead of using a hook)
+2. Name your environment variables uniquely with a project prefix
+
 * Limitations / Known Issues
 
 - This package doesn't yet handle variable unloading
