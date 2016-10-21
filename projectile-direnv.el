@@ -4,6 +4,7 @@
 
 ;; Author: Christian Romney <crommney@pointslope.com>
 ;; URL: https://github.com/christianromney/projectile-direnv
+;; Package-Version: 20160305.1738
 ;; Keywords: convenience
 ;; Version: 0.1.0
 ;; Package-Requires: ((emacs "24") (s "1.11.0") (dash "2.12.0") (projectile "0.13.0"))
@@ -34,6 +35,62 @@
 (require 's)
 (require 'dash)
 (require 'projectile)
+
+(defun direnv-data (dir)
+  ;; TODO: use dir for folder or smart current-project-dir variable
+  (let ((cmd (concat "/bin/bash -i -c '" "cd " dir " && direnv export bash'")))
+    (shell-command-to-string cmd)))
+
+;;(direnv-data "~/src/direnv")
+(defun commands-from-direnv (text)
+  (cl-remove-if 's-blank?
+                (split-string (first (last (split-string text "\n"))) ";")))
+
+(defun line->pair (line)
+  (split-string (string-join (rest (split-string line " ")) " ") "="))
+
+(defun remove-$-and-quotes (val)
+  (s-with val
+    (s-chop-prefix "$")
+    (s-chop-prefix "'")
+    (s-chop-suffix "'")
+    (s-chop-prefix "\"")
+    (s-chop-suffix "\"")))
+
+(defun line->kv (line)
+  (let* ((pair (line->pair line))
+         (key (first pair))
+         (value (remove-$-and-quotes (first (last pair)))))
+    (list key value)))
+
+(defun is-export? (str)
+  (s-starts-with? "export" str))
+
+(defun is-ignored-key? (ls)
+  (let ((key (first ls)))
+    (or
+     (s-starts-with? "DIRENV" key)
+     ;; (s-starts-with? "PATH" key)
+     )))
+
+(defun extract-exports (cmds)
+  (mapcar 'line->kv
+          (cl-remove-if-not 'is-export?
+                            (commands-from-direnv cmds))))
+
+(defun commands->list (cmds)
+  (let ((exports (extract-exports cmds)))
+    (cl-remove-if 'is-ignored-key? exports)))
+
+(defun setenv-pair (pair)
+  (let* ((k (first pair))
+         (v (first (last pair))))
+    (setenv k v)))
+
+(defun set-env-from-direnv (dir)
+  (let* ((data (direnv-data dir))
+         (pairs (commands->list data)))
+    (mapcar 'setenv-pair pairs)))
 
 (defvar projectile-direnv-envrc nil
   "Contains the path to the last loaded .envrc")
@@ -68,13 +125,7 @@ environment variables for any defined exports"
     (let ((envrc (expand-file-name ".envrc" (projectile-project-root))))
       (when (and (file-exists-p envrc)
                  (not (string= envrc projectile-direnv-envrc)))
-        (let* ((contents (projectile-direnv-read-file-as-string envrc))
-               (lines (s-split "\n" contents))
-               (exports (-filter (lambda (l) (s-starts-with? "export" l)) lines))
-               (envvars (-map #'projectile-direnv-parse-export exports)))
-          (setq projectile-direnv-envrc envrc)
-          (-each envvars #'projectile-direnv-set-env-var)
-          (message "projectile-direnv: export %s" (projectile-direnv-list-exports envvars)))))))
+        (set-env-from-direnv (projectile-project-root))))))
 
 (provide 'projectile-direnv)
 ;;; projectile-direnv.el ends here
